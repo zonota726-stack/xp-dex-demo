@@ -4,28 +4,41 @@ import { useState } from "react";
 
 export default function Home() {
   const [xp, setXp] = useState(3200);
-  const [decision, setDecision] = useState<string | null>(null);
+  const [account, setAccount] = useState<string | null>(null);
 
-  const refillXP = () => {
-    setXp((prev) => prev + 1000);
-    setDecision(null);
-  };
-
-  const runAIDecision = () => {
-    if (xp < 9800) {
-      setDecision("❌ Not enough XP for AI decision");
+  // MetaMask 接続
+  const connectWallet = async () => {
+    if (!(window as any).ethereum) {
+      alert("MetaMask not found");
       return;
     }
 
-    const choices = ["BUY XP/USDC", "SELL XP/USDC", "HOLD"];
-    const pick = choices[Math.floor(Math.random() * choices.length)];
-    setDecision(`🤖 AI Decision: ${pick} (Confidence: High)`);
+    const accounts = await (window as any).ethereum.request({
+      method: "eth_requestAccounts",
+    });
+
+    setAccount(accounts[0]);
   };
 
+  // XP補充（仮）
+  const handleRefill = () => {
+    setXp((prev) => prev + 1000);
+  };
+
+  const canDecide = xp >= 9800;
+
   return (
-    <main style={{ padding: 24, maxWidth: 640 }}>
+    <main style={{ padding: 20 }}>
       <h1>XP DEX Demo</h1>
       <p>XP-powered AI DEX demo (testnet)</p>
+
+      {/* Wallet */}
+      <h3>Wallet</h3>
+      {account ? (
+        <p>Connected: {account}</p>
+      ) : (
+        <button onClick={connectWallet}>Connect MetaMask</button>
+      )}
 
       <h3>XP STATUS</h3>
       <ul>
@@ -34,43 +47,46 @@ export default function Home() {
       </ul>
 
       <h3>Refill options</h3>
-      <button
-        onClick={refillXP}
-        style={{
-          padding: "10px 16px",
-          fontSize: 16,
-          cursor: "pointer",
-          marginRight: 8,
-        }}
-      >
-        + Refill XP (simulate mint)
-      </button>
+      <ul>
+        <li>Earn by action (slow)</li>
+        <li>
+          <button
+            onClick={handleRefill}
+            style={{
+              padding: "10px 16px",
+              marginTop: 8,
+              fontSize: 16,
+              cursor: "pointer",
+            }}
+          >
+            Instant refill via DEX (XP/USDC)
+          </button>
+        </li>
+      </ul>
 
-      <button
-        onClick={runAIDecision}
-        style={{
-          padding: "10px 16px",
-          fontSize: 16,
-          cursor: "pointer",
-        }}
-      >
-        Run AI Decision
-      </button>
-
-      {decision && (
-        <div
-          style={{
-            marginTop: 24,
-            padding: 16,
-            background: "#e6fffa",
-            borderRadius: 8,
-          }}
-        >
-          {decision}
-        </div>
+      {canDecide && account && (
+        <>
+          <h3>AI DECISION</h3>
+          <div
+            style={{
+              background: "#e8fffb",
+              padding: 16,
+              borderRadius: 8,
+              marginTop: 12,
+            }}
+          >
+            🤖 AI Decision: BUY XP/USDC (Confidence: High)
+          </div>
+        </>
       )}
 
-      <p style={{ marginTop: 32, color: "#666" }}>
+      {!account && (
+        <p style={{ marginTop: 16, color: "#c00" }}>
+          ※ Connect wallet to unlock AI decision
+        </p>
+      )}
+
+      <p style={{ marginTop: 24, color: "#666" }}>
         Demo UI – Testnet only
       </p>
     </main>
