@@ -4,7 +4,12 @@ import { useState } from "react";
 
 export default function Home() {
   const [xp, setXp] = useState(3200);
-  const [account, setAccount] = useState<string | null>(null);
+  const requiredXp = 9800;
+
+  // 仮：XP補充（ボタン押下でXP増えるだけ）
+  const handleRefill = () => {
+    setXp((prev) => prev + 1000);
+  };
 
   // MetaMask 接続
   const connectWallet = async () => {
@@ -17,33 +22,23 @@ export default function Home() {
       method: "eth_requestAccounts",
     });
 
-    setAccount(accounts[0]);
+    alert("Connected wallet:\n" + accounts[0]);
   };
 
-  // XP補充（仮）
-  const handleRefill = () => {
-    setXp((prev) => prev + 1000);
-  };
-
-  const canDecide = xp >= 9800;
+  const aiDecision =
+    xp >= requiredXp
+      ? "BUY XP/USDC (Confidence: High)"
+      : "WAIT (Not enough XP)";
 
   return (
-    <main style={{ padding: 20 }}>
+    <main style={{ padding: 24, maxWidth: 640 }}>
       <h1>XP DEX Demo</h1>
       <p>XP-powered AI DEX demo (testnet)</p>
-
-      {/* Wallet */}
-      <h3>Wallet</h3>
-      {account ? (
-        <p>Connected: {account}</p>
-      ) : (
-        <button onClick={connectWallet}>Connect MetaMask</button>
-      )}
 
       <h3>XP STATUS</h3>
       <ul>
         <li>Current XP: {xp.toLocaleString()}</li>
-        <li>Required for next decision: 9,800</li>
+        <li>Required for next decision: {requiredXp.toLocaleString()}</li>
       </ul>
 
       <h3>Refill options</h3>
@@ -64,27 +59,29 @@ export default function Home() {
         </li>
       </ul>
 
-      {canDecide && account && (
-        <>
-          <h3>AI DECISION</h3>
-          <div
-            style={{
-              background: "#e8fffb",
-              padding: 16,
-              borderRadius: 8,
-              marginTop: 12,
-            }}
-          >
-            🤖 AI Decision: BUY XP/USDC (Confidence: High)
-          </div>
-        </>
-      )}
+      <button
+        onClick={connectWallet}
+        style={{
+          marginTop: 20,
+          padding: "10px 16px",
+          fontSize: 16,
+          cursor: "pointer",
+        }}
+      >
+        Connect Wallet (MetaMask)
+      </button>
 
-      {!account && (
-        <p style={{ marginTop: 16, color: "#c00" }}>
-          ※ Connect wallet to unlock AI decision
-        </p>
-      )}
+      <h3 style={{ marginTop: 32 }}>AI DECISION</h3>
+      <div
+        style={{
+          background: "#eafff5",
+          border: "1px solid #9de0c5",
+          padding: 16,
+          borderRadius: 8,
+        }}
+      >
+        🤖 AI Decision: {aiDecision}
+      </div>
 
       <p style={{ marginTop: 24, color: "#666" }}>
         Demo UI – Testnet only
