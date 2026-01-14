@@ -1,7 +1,11 @@
-'use client';
+"use client";
+
+import { useState } from "react";
 export default function Home() {
+  const [xp, setXp] = useState(3200);
+
   const handleRefill = () => {
-    alert("DEX refill triggered (testnet mock)");
+    setXp((prev) => prev + 1000);
   };
 
   return (
@@ -11,7 +15,7 @@ export default function Home() {
 
       <h3>XP STATUS</h3>
       <ul>
-        <li>Current XP: 3,200</li>
+        <li>Current XP: {xp.toLocaleString()}</li>
         <li>Required for next decision: 9,800</li>
       </ul>
 
