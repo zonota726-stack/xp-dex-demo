@@ -1,4 +1,8 @@
 export default function Home() {
+  const handleRefill = () => {
+    alert("DEX refill triggered (testnet mock)");
+  };
+
   return (
     <main style={{ padding: 20 }}>
       <h1>XP DEX Demo</h1>
@@ -13,10 +17,22 @@ export default function Home() {
       <h3>Refill options</h3>
       <ul>
         <li>Earn by action (slow)</li>
-        <li>Instant refill via DEX (XP/USDC)</li>
+        <li>
+          <button
+            onClick={handleRefill}
+            style={{
+              padding: "10px 16px",
+              marginTop: 8,
+              fontSize: 16,
+              cursor: "pointer",
+            }}
+          >
+            Instant refill via DEX (XP/USDC)
+          </button>
+        </li>
       </ul>
 
-      <p style={{ marginTop: 24, color: "gray" }}>
+      <p style={{ marginTop: 24, color: "#666" }}>
         Demo UI – Testnet only
       </p>
     </main>
