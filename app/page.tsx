@@ -1,3 +1,4 @@
+'use client';
 export default function Home() {
   const handleRefill = () => {
     alert("DEX refill triggered (testnet mock)");
