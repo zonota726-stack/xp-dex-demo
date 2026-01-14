@@ -3,17 +3,27 @@
 import { useState } from "react";
 
 export default function Home() {
+  // XP状態
   const [xp, setXp] = useState(3200);
-  const REQUIRED_XP = 9800;
 
+  // AI判断結果
+  const [decision, setDecision] = useState<string | null>(null);
+
+  // XP補充（DEXリフィル）
   const handleRefill = () => {
     setXp((prev) => prev + 1000);
   };
 
-  const aiDecision =
-    xp >= REQUIRED_XP
-      ? "🤖 AI Decision: BUY XP/USDC (Confidence: High)"
-      : "🤖 AI waiting for more XP...";
+  // AI判断（XP消費）
+  const handleAIDecision = () => {
+    if (xp < 9800) return;
+
+    // XPを消費
+    setXp(0);
+
+    // AIの判断（デモ）
+    setDecision("BUY XP/USDC");
+  };
 
   return (
     <main style={{ padding: 20 }}>
@@ -23,7 +33,7 @@ export default function Home() {
       <h3>XP STATUS</h3>
       <ul>
         <li>Current XP: {xp.toLocaleString()}</li>
-        <li>Required for next decision: {REQUIRED_XP.toLocaleString()}</li>
+        <li>Required for next decision: 9,800</li>
       </ul>
 
       <h3>Refill options</h3>
@@ -44,18 +54,35 @@ export default function Home() {
         </li>
       </ul>
 
-      <h3>AI DECISION</h3>
-      <div
-        style={{
-          marginTop: 12,
-          padding: 12,
-          border: "1px solid #ddd",
-          borderRadius: 8,
-          background: xp >= REQUIRED_XP ? "#e6fffa" : "#f9f9f9",
-        }}
-      >
-        {aiDecision}
-      </div>
+      {/* XPが足りたらAI判断ボタン表示 */}
+      {xp >= 9800 && !decision && (
+        <button
+          onClick={handleAIDecision}
+          style={{
+            padding: "12px 20px",
+            marginTop: 16,
+            fontSize: 16,
+            fontWeight: "bold",
+            cursor: "pointer",
+          }}
+        >
+          🤖 Use XP to get AI Decision
+        </button>
+      )}
+
+      {/* AI判断結果 */}
+      {decision && (
+        <div
+          style={{
+            marginTop: 24,
+            padding: 16,
+            borderRadius: 8,
+            background: "#e6fffa",
+          }}
+        >
+          🤖 AI Decision: {decision} (Confidence: High)
+        </div>
+      )}
 
       <p style={{ marginTop: 24, color: "#666" }}>
         Demo UI – Testnet only
